@@ -3,8 +3,16 @@ package spliterators.exercise.exercise1;
 import org.junit.Test;
 
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.function.IntFunction;
+import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.counting;
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.toList;
 import static org.junit.Assert.assertEquals;
 
 public class Exercise1 {
@@ -22,6 +30,15 @@ public class Exercise1 {
     }
 
     private List<String> getMostPopularWords(int count, String... words) {
-        throw new UnsupportedOperationException();
+        return Arrays.stream(words)
+                     .map(String::toLowerCase)
+                     .collect(groupingBy(Function.identity(), counting()))
+                     .entrySet()
+                     .stream()
+                     .sorted(Comparator.comparingLong((Map.Entry<String, Long>::getValue)).reversed()
+                                       .thenComparing(Map.Entry::getKey))
+                     .limit(count)
+                     .map(Map.Entry::getKey)
+                     .collect(toList());
     }
 }
